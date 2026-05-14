@@ -92,6 +92,7 @@ const fragmentShader = `
     uniform float uTime;
     uniform vec3 uColor1;
     uniform vec3 uColor2;
+    uniform float uIntensity;
 
     void main() {
         vec3 normal = normalize(vNormal);
@@ -100,14 +101,14 @@ const fragmentShader = `
         float fresnel = pow(1.0 - dot(normal, viewDir), 3.0);
         
         vec3 baseColor = mix(uColor1, uColor2, vUv.y + sin(uTime * 0.5) * 0.2);
-        vec3 color = mix(baseColor, vec3(1.0), fresnel * 0.8);
+        vec3 color = mix(baseColor, vec3(1.0), fresnel * (0.8 + uIntensity * 0.5));
         
         // Add iridescence effect
         color += vec3(
             sin(fresnel * 10.0 + uTime),
             sin(fresnel * 10.0 + uTime + 2.0),
             sin(fresnel * 10.0 + uTime + 4.0)
-        ) * 0.2 * fresnel;
+        ) * (0.2 + uIntensity * 0.4) * fresnel;
 
         gl_FragColor = vec4(color, 1.0);
     }
@@ -123,13 +124,18 @@ export class Singularity {
             uniforms: {
                 uTime: { value: 0 },
                 uColor1: { value: new THREE.Color(0x050505) },
-                uColor2: { value: new THREE.Color(0x1a1a1a) }
+                uColor2: { value: new THREE.Color(0x1a1a1a) },
+                uIntensity: { value: 0 }
             },
             transparent: true
         });
 
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.scene.add(this.mesh);
+    }
+
+    setIntensity(value) {
+        this.material.uniforms.uIntensity.value = value;
     }
 
     update(time) {
