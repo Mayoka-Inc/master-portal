@@ -1,7 +1,8 @@
-import { Scene } from './gfx/Scene';
-import { Singularity } from './gfx/Singularity';
-import { Particles } from './gfx/Particles';
-import { AudioManager } from './audio/AudioManager';
+import './style.css';
+import { Scene } from './gfx/Scene.js';
+import { Singularity } from './gfx/Singularity.js';
+import { Particles } from './gfx/Particles.js';
+import { AudioManager } from './audio/AudioManager.js';
 import { signal, effect } from '@preact/signals-core';
 import { gsap } from 'gsap';
 
@@ -208,4 +209,6 @@ class App {
     }
 }
 
-new App();
+window.addEventListener('DOMContentLoaded', () => {
+    new App();
+});
