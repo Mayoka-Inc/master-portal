@@ -17,6 +17,14 @@ export class Scene {
         
         this.camera.position.z = 5;
 
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        this.scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        this.scene.add(directionalLight);
+
         window.addEventListener('resize', () => this.onWindowResize());
         
         this.mouse = new THREE.Vector2();

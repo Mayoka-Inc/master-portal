@@ -1,10 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+    --neon-blue: #00f2ff;
+    --neon-purple: #bc00ff;
+    --hud-line: rgba(0, 242, 255, 0.3);
+    --bg-dark: #050505;
+}
+
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #000;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #fff;
+    background-color: var(--bg-dark);
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--neon-blue);
+    text-transform: uppercase;
 }
 
 canvas {
@@ -18,28 +28,143 @@ canvas {
 #app {
     position: relative;
     z-index: 1;
-    pointer-events: none;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+/* HUD ELEMENTS */
+.hud-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border: 1px solid var(--hud-line);
+    box-sizing: border-box;
+    margin: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+}
+
+.corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--neon-blue);
+}
+
+.top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+/* SCANNING ANIMATION */
+.scan-line {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--hud-line), transparent);
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* NAVIGATION */
+nav {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    pointer-events: all;
+}
+
+.nav-item {
+    padding: 8px 16px;
+    border: 1px solid var(--hud-line);
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item.active {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.nav-item:hover::before {
+    left: 100%;
+}
+
+/* CONTENT */
+.content-area {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    padding: 20px;
 }
 
 h1 {
-    font-size: 4rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 1rem;
-    background: linear-gradient(to right, #fff, #999);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 5rem;
+    margin: 0;
+    text-shadow: 0 0 10px var(--neon-blue);
+    letter-spacing: 0.5rem;
 }
 
-p {
-    font-size: 1.2rem;
-    color: #888;
-    max-width: 600px;
-    line-height: 1.6;
+.status-box {
+    border: 1px solid var(--hud-line);
+    padding: 15px;
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    min-width: 300px;
+    text-align: left;
+    position: relative;
+}
+
+.status-box::after {
+    content: 'SYS.READY';
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: var(--bg-dark);
+    padding: 0 5px;
+    font-size: 0.7rem;
+    color: var(--neon-purple);
+}
+
+.glitch-text {
+    position: relative;
+}
+
+/* UTILS */
+.neon-text {
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.purple-text {
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px var(--neon-purple);
 }
