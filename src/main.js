@@ -1,6 +1,7 @@
 import { Scene } from './gfx/Scene';
 import { Singularity } from './gfx/Singularity';
 import { Particles } from './gfx/Particles';
+import { AudioManager } from './audio/AudioManager';
 import { signal, effect } from '@preact/signals-core';
 import { gsap } from 'gsap';
 
@@ -12,13 +13,25 @@ class App {
         this.gfx = new Scene('app');
         this.singularity = new Singularity(this.gfx.scene);
         this.particles = new Particles(this.gfx.scene);
+        this.audio = new AudioManager();
         
         this.render = this.render.bind(this);
         this.initUI();
         this.setupReactiveUI();
         this.initAnimations();
+        this.setupAudioTrigger();
         
         requestAnimationFrame(this.render);
+    }
+
+    setupAudioTrigger() {
+        const trigger = () => {
+            this.audio.init();
+            window.removeEventListener('click', trigger);
+            window.removeEventListener('keydown', trigger);
+        };
+        window.addEventListener('click', trigger);
+        window.addEventListener('keydown', trigger);
     }
 
     initUI() {
@@ -145,6 +158,7 @@ class App {
     render(time) {
         this.singularity.update(time);
         this.particles.update(this.gfx.mouse);
+        this.audio.update(this.gfx.mouse);
         this.gfx.render(time);
         requestAnimationFrame(this.render);
     }
