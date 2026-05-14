@@ -2,6 +2,7 @@ import './style.css';
 import { Scene } from './gfx/Scene.js';
 import { Singularity } from './gfx/Singularity.js';
 import { Particles } from './gfx/Particles.js';
+import { SiphonShip } from './gfx/SiphonShip.js';
 import { AudioManager } from './audio/AudioManager.js';
 import { signal, effect } from '@preact/signals-core';
 import { gsap } from 'gsap';
@@ -14,6 +15,7 @@ class App {
         this.gfx = new Scene('app');
         this.singularity = new Singularity(this.gfx.scene);
         this.particles = new Particles(this.gfx.scene);
+        this.ship = new SiphonShip(this.gfx.scene);
         this.audio = new AudioManager();
         
         // Nova System: Speed tracking
@@ -203,6 +205,7 @@ class App {
         this.orchestrate();
         this.singularity.update(time);
         this.particles.update(this.gfx.mouse);
+        this.ship.update(this.gfx.mouse);
         this.audio.update(this.gfx.mouse);
         this.gfx.render(time);
         requestAnimationFrame(this.render);
