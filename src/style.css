@@ -22,12 +22,12 @@ canvas {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: 0;
 }
 
 #app {
     position: relative;
-    z-index: 1;
+    z-index: 10;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -44,15 +44,17 @@ canvas {
     pointer-events: none;
     border: 1px solid var(--hud-line);
     box-sizing: border-box;
-    margin: 10px;
-    width: calc(100% - 20px);
-    height: calc(100% - 20px);
+    margin: 15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+    backdrop-filter: blur(2px);
+    background: radial-gradient(circle at center, transparent 30%, rgba(0, 242, 255, 0.05) 100%);
 }
 
 .corner {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border: 2px solid var(--neon-blue);
 }
 
@@ -86,19 +88,22 @@ nav {
 }
 
 .nav-item {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: 1px solid var(--hud-line);
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
 }
 
 .nav-item.active {
     background: var(--neon-blue);
     color: #000;
-    box-shadow: 0 0 15px var(--neon-blue);
+    box-shadow: 0 0 25px var(--neon-blue);
 }
 
 .nav-item::before {
@@ -116,7 +121,7 @@ nav {
     left: 100%;
 }
 
-/* CONTENT */
+/* CONTENT AREA */
 .content-area {
     flex: 1;
     display: flex;
@@ -126,21 +131,62 @@ nav {
     padding: 20px;
 }
 
-h1 {
-    font-size: 5rem;
+/* GLITCH EFFECT */
+.glitch-wrapper {
+    position: relative;
+}
+
+#view-title {
+    font-size: 6rem;
     margin: 0;
-    text-shadow: 0 0 10px var(--neon-blue);
-    letter-spacing: 0.5rem;
+    text-shadow: 0 0 20px var(--neon-blue);
+    letter-spacing: 1rem;
+    position: relative;
+}
+
+#view-title::before,
+#view-title::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+#view-title::before {
+    color: #ff00c1;
+    z-index: -1;
+    animation: glitch 3s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+
+#view-title::after {
+    color: #00fff9;
+    z-index: -2;
+    animation: glitch 3s cubic-bezier(.25, .46, .45, .94) reverse both infinite;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(-3px, -3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
 }
 
 .status-box {
     border: 1px solid var(--hud-line);
-    padding: 15px;
+    padding: 20px;
     margin-top: 20px;
-    background: rgba(0, 0, 0, 0.4);
-    min-width: 300px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    min-width: 350px;
     text-align: left;
     position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
 }
 
 .status-box::after {
@@ -152,10 +198,6 @@ h1 {
     padding: 0 5px;
     font-size: 0.7rem;
     color: var(--neon-purple);
-}
-
-.glitch-text {
-    position: relative;
 }
 
 /* UTILS */

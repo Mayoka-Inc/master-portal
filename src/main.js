@@ -47,7 +47,9 @@ class App {
 
     initUI() {
         const container = document.getElementById('app');
-        container.innerHTML = `
+        const uiRoot = document.createElement('div');
+        uiRoot.id = 'ui-root';
+        uiRoot.innerHTML = `
             <div class="hud-overlay" style="opacity: 0;">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
@@ -55,24 +57,27 @@ class App {
                 <div class="corner bottom-right"></div>
                 
                 <nav id="main-nav">
-                    <div class="nav-item" data-view="CORE">CORE</div>
+                    <div class="nav-item active" data-view="CORE">CORE</div>
                     <div class="nav-item" data-view="SYSTEM">SYSTEM</div>
                     <div class="nav-item" data-view="NETWORK">NETWORK</div>
                     <div class="nav-item" data-view="DATA">DATA</div>
                 </nav>
 
                 <div class="content-area">
-                    <h1 id="view-title">MASTER PORTAL</h1>
+                    <div class="glitch-wrapper">
+                        <h1 id="view-title" data-text="MASTER PORTAL">MASTER PORTAL</h1>
+                    </div>
                     <div class="status-box">
-                        <div id="view-content">Initializing...</div>
+                        <div id="view-content">Initializing Neural Link...</div>
                         <div style="margin-top: 10px; font-size: 0.8rem; color: #888;">
-                            LOAD_SEQ: <span class="purple-text">0x7F2A...</span>
+                            LOAD_SEQ: <span class="purple-text">0x7F2A...</span> STATUS: <span class="neon-text">OPERATIONAL</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="scan-line"></div>
         `;
+        container.appendChild(uiRoot);
 
         // Navigation event listeners
         document.querySelectorAll('.nav-item').forEach(item => {
