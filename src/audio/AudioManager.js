@@ -168,6 +168,41 @@ export class AudioManager {
         // Map mouse speed to filter cutoff (400Hz to 12kHz)
         // High speed = more high-frequency content (filter opens)
         const targetCutoff = 400 + (this.mouseSpeed * 35000);
-        this.musicDirector.filterCutoff = Math.min(12000, targetCutoff);
+        this.setFilterCutoff(Math.min(12000, targetCutoff));
+    }
+
+    setFilterCutoff(value) {
+        if (this.musicDirector) {
+            this.musicDirector.filterCutoff = value;
+        }
+    }
+
+    playScanSound() {
+        if (!this.initialized) return;
+
+        const time = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const sweepEnv = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(40, time);
+        osc.frequency.exponentialRampToValueAtTime(2000, time + 1.5);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(40, time);
+        filter.frequency.exponentialRampToValueAtTime(2000, time + 1.5);
+        filter.Q.setValueAtTime(10, time);
+
+        sweepEnv.gain.setValueAtTime(0, time);
+        sweepEnv.gain.linearRampToValueAtTime(0.2, time + 0.1);
+        sweepEnv.gain.linearRampToValueAtTime(0, time + 1.5);
+
+        osc.connect(filter);
+        filter.connect(sweepEnv);
+        sweepEnv.connect(this.masterGain);
+
+        osc.start(time);
+        osc.stop(time + 1.5);
     }
 }

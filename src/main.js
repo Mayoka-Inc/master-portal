@@ -15,6 +15,10 @@ class App {
         this.particles = new Particles(this.gfx.scene);
         this.audio = new AudioManager();
         
+        // Nova System: Speed tracking
+        this.lastMousePos = { x: 0, y: 0 };
+        this.cursorSpeed = 0;
+        
         this.render = this.render.bind(this);
         this.initUI();
         this.setupReactiveUI();
@@ -27,6 +31,10 @@ class App {
     setupAudioTrigger() {
         const trigger = () => {
             this.audio.init();
+            // Trigger Master Entry sound sequence
+            setTimeout(() => {
+                this.audio.playScanSound();
+            }, 500);
             window.removeEventListener('click', trigger);
             window.removeEventListener('keydown', trigger);
         };
@@ -37,7 +45,7 @@ class App {
     initUI() {
         const container = document.getElementById('app');
         container.innerHTML = `
-            <div class="hud-overlay">
+            <div class="hud-overlay" style="opacity: 0;">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
                 <div class="corner bottom-left"></div>
@@ -139,23 +147,59 @@ class App {
             repeatDelay: 1
         });
 
-        // Initial entrance
-        gsap.from(".hud-overlay", {
-            opacity: 0,
-            duration: 1,
-            delay: 0.5
-        });
+        // Master Entry Sequence: UI Fade In
+        const tl = gsap.timeline({ delay: 0.5 });
         
-        gsap.from(".corner", {
+        tl.to(".hud-overlay", {
+            opacity: 1,
+            duration: 1.5,
+            ease: "power2.out"
+        });
+
+        tl.from(".corner", {
             width: 0,
             height: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "expo.out"
+        }, "-=1");
+
+        tl.from(".nav-item", {
+            opacity: 0,
+            y: -20,
             duration: 0.8,
             stagger: 0.1,
-            ease: "expo.out"
-        });
+            ease: "back.out(1.7)"
+        }, "-=0.5");
+    }
+
+    orchestrate() {
+        const mouse = this.gfx.mouse;
+        if (!mouse) return;
+
+        // Calculate Cursor Speed (Nova)
+        const dx = mouse.x - this.lastMousePos.x;
+        const dy = mouse.y - this.lastMousePos.y;
+        const instantSpeed = Math.sqrt(dx * dx + dy * dy);
+        
+        // Smoothing
+        this.cursorSpeed += (instantSpeed - this.cursorSpeed) * 0.1;
+        this.lastMousePos.x = mouse.x;
+        this.lastMousePos.y = mouse.y;
+
+        // Link Cursor Speed to Shader Intensity (Atlas)
+        const intensity = Math.min(1.0, this.cursorSpeed * 10);
+        this.singularity.setIntensity(intensity);
+
+        // Link Cursor Speed to Filter Cutoff (Aura)
+        // AudioManager.update already handles speed internally, but we'll 
+        // override/ensure it's synced if needed. 
+        // Actually AudioManager.update(mouse) does its own speed calc.
+        // Let's just make sure it's called.
     }
 
     render(time) {
+        this.orchestrate();
         this.singularity.update(time);
         this.particles.update(this.gfx.mouse);
         this.audio.update(this.gfx.mouse);
